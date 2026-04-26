@@ -17,6 +17,62 @@ class HouseUpdate(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
 
+#functions and formulas for output and efficiency
+def compute_output_w(raw_resistor_values: list[float]) -> float:
+    if not raw_resistor_values:
+        return 0.0
+    """Lowk forgot the formulas for this KENNY HELP"""
+
+def compute_efficiency_percentage(output_w: float, max_output_w: float = 100.0) -> float:
+    if output_w <= 0:
+        return 0.0
+"""ALSO FORGOT"""
+
+#Status endpoint
+@router.get("/{house_id}/status")
+def get_house_status(house_id: int):
+    #verify house exists
+    house_resp = supabase.table("houses").select("*").eq("house_id", house_id).execute()
+    if not house_resp.data:
+        raise HTTPException(status_code=404, detail="House not found")
+
+    #get all panels
+    panels_resp = supabase.table("panels").select("*").eq("house_id", house_id).execute()
+    panels = panels_resp.data
+    result = []
+
+    for panel in panels:
+        panel_id = panel["id"]
+
+        reading_resp = (supabase.table("panel_readings").select("*").eq("panel_id", panel_id).order("recorded_at", desc=True).limit(1).execute())
+        latest_reading = reading_resp.data[0] if reading_resp.data else None
+
+        resistor_resp = (supabase.table("resistors").select("*").eq("panel_id", panel_id).order("created_at", desc=True).limit(4).execute())
+        resistor_values = [r["output_w"] for r in resistor_resp.data]
+
+        computed_output_w = compute_output_w(resistor_values)
+        computed_efficiency = compute_efficiency_percentage(computed_output_w)
+
+        result.append({
+            "panel_id": panel_id,
+            "house_id": house_id,
+            "panel_output_w": panel["output_w"],
+            "latest_reading": latest_reading,
+            "computed":{
+                "output_w": computed_output_w,
+                "efficiency_percentage": computed_efficiency,
+            }
+        })
+        return {
+            "house_id": house_id,
+            "house": house_resp.data[0],
+            "panels": result
+
+        }
+            
+
+
+
 
 # GET all houses
 @router.get("/")
