@@ -21,6 +21,21 @@ def get_all_readings():
     response = supabase.table("panel_readings").select("*").execute()
     return response.data
 
+@router.post("/readings/panel", status_code = 201)
+def receive_arduino_reading(data: ArduinoPanelReading):
+    """
+    Matches the Arduino's apiPath: POST /panel-readings/readings/panel
+    Averages the 4 sensor values into a single reading and stores it.
+    """
+    avg_reading = int((data.a0 + data.a1 + data.a3 + data.a5) / 4)
+ 
+    response = supabase.table("panel_readings").insert({
+        "panel_id": data.panel_id,
+        "reading": avg_reading,
+    }).execute()
+ 
+    return response.data
+
 
 # GET reading by panel_id (unique — returns single record)
 @router.get("/panel/{panel_id}")
