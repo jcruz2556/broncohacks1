@@ -8,13 +8,18 @@ router = APIRouter(prefix="/panel-readings", tags=["panel_readings"])
 
 class PanelReading(BaseModel):
     panel_id: int
-    reading: Optional[int] = None       # nullable int2
+    reading: Optional[dict] = None       # nullable int2
    
 class PanelReadingUpdate(BaseModel):
     panel_id: Optional[int] = None
-    reading: Optional[int] = None
+    reading: Optional[dict] = None
     
-
+class ArduinoPanelReading(BaseModel):
+    panel_id: int
+    a0: int
+    a1: int
+    a3: int
+    a5: int
 # GET all readings
 @router.get("/")
 def get_all_readings():
@@ -25,13 +30,17 @@ def get_all_readings():
 def receive_arduino_reading(data: ArduinoPanelReading):
     """
     Matches the Arduino's apiPath: POST /panel-readings/readings/panel
-    Averages the 4 sensor values into a single reading and stores it.
     """
-    avg_reading = int((data.a0 + data.a1 + data.a3 + data.a5) / 4)
- 
+    reading_json = {
+        "LL": data.a0,
+        "UL": data.a1,
+        "UR": data.a3,
+        "LR": data.a5
+    
+    }
     response = supabase.table("panel_readings").insert({
         "panel_id": data.panel_id,
-        "reading": avg_reading,
+        "reading": reading_json,
     }).execute()
  
     return response.data
