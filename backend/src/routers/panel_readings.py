@@ -15,34 +15,15 @@ class PanelReadingUpdate(BaseModel):
     reading: Optional[dict] = None
     
 class ArduinoPanelReading(BaseModel):
-    panel_id: int
     a0: int
     a1: int
     a3: int
     a5: int
+
 # GET all readings
 @router.get("/")
 def get_all_readings():
     response = supabase.table("panel_readings").select("*").execute()
-    return response.data
-
-@router.post("/readings/panel", status_code = 201)
-def receive_arduino_reading(data: ArduinoPanelReading):
-    """
-    Matches the Arduino's apiPath: POST /panel-readings/readings/panel
-    """
-    reading_json = {
-        "LL": data.a0,
-        "UL": data.a1,
-        "UR": data.a3,
-        "LR": data.a5
-    
-    }
-    response = supabase.table("panel_readings").insert({
-        "panel_id": data.panel_id,
-        "reading": reading_json,
-    }).execute()
- 
     return response.data
 
 
@@ -65,9 +46,23 @@ def get_reading(id: int):
 
 
 # POST create a reading
-@router.post("/", status_code=201)
-def create_reading(reading: PanelReading):
-    response = supabase.table("panel_readings").insert(reading.model_dump()).execute()
+@router.post("", status_code=201)
+def receive_arduino_reading(data: ArduinoPanelReading):
+    """
+    Matches the Arduino's apiPath: POST /panel-readings/readings/panel
+    """
+    reading_json = {
+        "LL": data.a0,
+        "UL": data.a1,
+        "UR": data.a3,
+        "LR": data.a5
+    
+    }
+    response = supabase.table("panel_readings").insert({
+        "panel_id": 1,
+        "reading": reading_json,
+    }).execute()
+ 
     return response.data
 
 
