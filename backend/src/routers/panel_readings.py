@@ -27,21 +27,21 @@ def get_all_readings():
     return response.data
 
 
-# GET reading by ID
-@router.get("/{id}")
-def get_reading(id: int):
-    response = supabase.table("panel_readings").select("*").eq("id", id).execute()
-    if not response.data:
-        raise HTTPException(status_code=404, detail="Reading not found")
-    return response.data[0]
-
-
 # GET reading by panel_id (unique — returns single record)
 @router.get("/panel/{panel_id}")
 def get_reading_by_panel(panel_id: int):
     response = supabase.table("panel_readings").select("*").eq("panel_id", panel_id).execute()
     if not response.data:
         raise HTTPException(status_code=404, detail="No reading found for this panel")
+    return response.data[0]
+
+
+# GET reading by ID
+@router.get("/{id}")
+def get_reading(id: int):
+    response = supabase.table("panel_readings").select("*").eq("id", id).execute()
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Reading not found")
     return response.data[0]
 
 

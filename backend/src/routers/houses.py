@@ -25,6 +25,13 @@ def get_all_houses():
     return response.data
 
 
+# GET all houses by user
+@router.get("/user/{user_id}")
+def get_houses_by_user(user_id: int):
+    response = supabase.table("houses").select("*").eq("user_id", user_id).execute()
+    return response.data
+
+
 # GET house by ID
 @router.get("/{house_id}")
 def get_house(house_id: int):
@@ -32,13 +39,6 @@ def get_house(house_id: int):
     if not response.data:
         raise HTTPException(status_code=404, detail="House not found")
     return response.data[0]
-
-
-# GET all houses by user
-@router.get("/user/{user_id}")
-def get_houses_by_user(user_id: int):
-    response = supabase.table("houses").select("*").eq("user_id", user_id).execute()
-    return response.data
 
 
 # POST create a house

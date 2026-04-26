@@ -23,6 +23,13 @@ def get_all_panels():
     return response.data
 
 
+# GET all panels for a house
+@router.get("/house/{house_id}")
+def get_panels_by_house(house_id: int):
+    response = supabase.table("panels").select("*").eq("house_id", house_id).execute()
+    return response.data
+
+
 # GET panel by ID
 @router.get("/{id}")
 def get_panel(id: int):
@@ -30,13 +37,6 @@ def get_panel(id: int):
     if not response.data:
         raise HTTPException(status_code=404, detail="Panel not found")
     return response.data[0]
-
-
-# GET all panels for a house
-@router.get("/house/{house_id}")
-def get_panels_by_house(house_id: int):
-    response = supabase.table("panels").select("*").eq("house_id", house_id).execute()
-    return response.data
 
 
 # POST create a panel

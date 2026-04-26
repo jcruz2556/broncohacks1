@@ -23,6 +23,13 @@ def get_all_resistors():
     return response.data
 
 
+# GET all resistors for a panel
+@router.get("/panel/{panel_id}")
+def get_resistors_by_panel(panel_id: int):
+    response = supabase.table("resistors").select("*").eq("panel_id", panel_id).execute()
+    return response.data
+
+
 # GET resistor by ID
 @router.get("/{id}")
 def get_resistor(id: int):
@@ -31,12 +38,6 @@ def get_resistor(id: int):
         raise HTTPException(status_code=404, detail="Resistor not found")
     return response.data[0]
 
-
-# GET all resistors for a panel
-@router.get("/panel/{panel_id}")
-def get_resistors_by_panel(panel_id: int):
-    response = supabase.table("resistors").select("*").eq("panel_id", panel_id).execute()
-    return response.data
 
 
 # POST create a resistor
