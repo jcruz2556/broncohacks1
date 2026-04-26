@@ -34,11 +34,13 @@ class ResistorReading(BaseModel):
 def root():
     return {"message": "API is running"}
 
+
 @app.post("/readings/panel")
 async def panel_reading(request: Request):
     data = await request.json()
     print(f"Panel data: {data}")
     return {"status": "ok", "received": data}
+
 
 @app.post("/readings/resistor")
 async def resistor_reading(data: ResistorReading):
@@ -46,4 +48,3 @@ async def resistor_reading(data: ResistorReading):
     return {"status": "ok", "recieved": data}
 
 
-    
