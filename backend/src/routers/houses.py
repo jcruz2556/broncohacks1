@@ -21,11 +21,14 @@ class HouseUpdate(BaseModel):
 def compute_output_w(raw_resistor_values: list[float]) -> float:
     if not raw_resistor_values:
         return 0.0
+    return sum(raw_resistor_values)
+
     """Lowk forgot the formulas for this KENNY HELP"""
 
 def compute_efficiency_percentage(output_w: float, max_output_w: float = 100.0) -> float:
     if output_w <= 0:
         return 0.0
+    return round((output_w / max_output_w) * 100, 1)
 """ALSO FORGOT"""
 
 #Status endpoint
@@ -51,24 +54,26 @@ def get_house_status(house_id: int):
         resistor_values = [r["output_w"] for r in resistor_resp.data]
 
         computed_output_w = compute_output_w(resistor_values)
-        computed_efficiency = compute_efficiency_percentage(computed_output_w)
+        computed_efficiency = compute_efficiency_percentage(computed_output_w, panel["output_w"])
 
         result.append({
             "panel_id": panel_id,
             "house_id": house_id,
             "panel_output_w": panel["output_w"],
+            "is_online": latest_reading is not None and computed_output_w > 0,
             "latest_reading": latest_reading,
             "computed":{
                 "output_w": computed_output_w,
                 "efficiency_percentage": computed_efficiency,
             }
         })
-        return {
-            "house_id": house_id,
-            "house": house_resp.data[0],
-            "panels": result
 
-        }
+    return {
+        "house_id": house_id,
+        "house": house_resp.data[0],
+        "panels": result
+
+    }
             
 
 
