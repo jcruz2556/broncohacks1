@@ -8,3 +8,13 @@ __pycache__/
 dist/
 build/
 .DS_Store
+
+# Xcode
+.DS_Store
+xcuserdata/
+DerivedData/
+*.xcuserstate
+*.xccheckout
+
+# Swift Package Manager
+.build/
