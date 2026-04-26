@@ -26,6 +26,20 @@ def get_all_readings():
     response = supabase.table("panel_readings").select("*").execute()
     return response.data
 
+# GET LATEST READING
+@router.get("/panel/{panel_id}/latest")
+def get_latest_reading(panel_id: int):
+    response = (
+        supabase.table("panel_readings")
+        .select("*")
+        .eq("panel_id", panel_id)
+        .order("recorded_at", desc=True)
+        .limit(1)
+        .execute()
+    )
+    if not response.data:
+        raise HTTPException(status_code=404, detail="No readings found for this panel")
+    return response.data[0]
 
 # GET reading by panel_id (unique — returns single record)
 @router.get("/panel/{panel_id}")
