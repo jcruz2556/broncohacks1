@@ -9,16 +9,11 @@ router = APIRouter(prefix="/panel-readings", tags=["panel_readings"])
 class PanelReading(BaseModel):
     panel_id: int
     reading: Optional[int] = None       # nullable int2
-    battery_state: Optional[str] = None
-    efficiency_percentage: Optional[int] = None
-
-
+   
 class PanelReadingUpdate(BaseModel):
     panel_id: Optional[int] = None
     reading: Optional[int] = None
-    battery_state: Optional[str] = None
-    efficiency_percentage: Optional[int] = None
-
+    
 
 # GET all readings
 @router.get("/")
