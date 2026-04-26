@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import List
 
@@ -23,8 +23,10 @@ def root():
     return {"message": "API is running"}
 
 @app.post("/readings/panel")
-async def panel_reading(data: PanelReading):
-    print(f"Panel ID: {data}")
+async def panel_reading(request: Request):
+    data = await request.json()
+    print(f"Panel data: {data}")
+    return {"status": "ok", "received": data}
 
 @app.post("/readings/resistor")
 async def resistor_reading(data: ResistorReading):
