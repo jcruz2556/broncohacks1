@@ -1,8 +1,20 @@
+import os
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
+from dotenv import load_dotenv
+from supabase import create_client, Client
 from typing import List
 
+from routers import houses, panel_readings, panels, resistors, users
+
+load_dotenv()
 app = FastAPI()
+
+app.include_router(houses.router)
+app.include_router(panel_readings.router)
+app.include_router(panels.router)
+app.include_router(resistors.router)
+app.include_router(users.router)
 
 class PanelReading(BaseModel):
     panel_id:str
